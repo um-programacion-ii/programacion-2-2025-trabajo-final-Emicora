@@ -42,8 +42,6 @@ curl -X POST "http://192.168.194.250:8080/api/v1/agregar_usuario" \
   }'
 ```
 
-**Importante:** Reemplaza `192.168.194.76` con tu IP en la red ZeroTier (rango 192.168.194.0/24).
-
 La respuesta incluye el token que deberás configurar en el backend.
 
 ### 3. Guardar el token
