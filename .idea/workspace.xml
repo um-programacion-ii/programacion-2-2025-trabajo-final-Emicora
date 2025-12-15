@@ -5,19 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f5e0443c-5f75-47a2-abdc-90d5405f000d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/um/eventosbackend/domain/Evento.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/um/eventosbackend/domain/EventoTipo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/um/eventosbackend/domain/Integrante.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/um/eventosbackend/repository/EventoRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/um/eventosbackend/repository/EventoTipoRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/um/eventosbackend/repository/IntegranteRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/um/eventosbackend/service/catedra/EventoSincronizacionService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/um/eventosbackend/service/dto/CatedraEventoDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/um/eventosbackend/service/dto/CatedraEventoTipoDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/um/eventosbackend/service/dto/CatedraIntegranteDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/um/eventosbackend/service/mapper/EventoMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/docs/registro-catedra.md" beforeDir="false" afterPath="$PROJECT_DIR$/backend/docs/registro-catedra.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/um/eventosbackend/service/catedra/exception/CatedraAuthenticationException.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/um/eventosbackend/service/catedra/exception/CatedraAuthenticationException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/um/eventosbackend/config/ApplicationProperties.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/um/eventosbackend/config/ApplicationProperties.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/um/eventosbackend/service/EventoQueryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/um/eventosbackend/service/EventoQueryService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/um/eventosbackend/service/dto/EventoDetalleDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/um/eventosbackend/service/dto/EventoDetalleDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/um/eventosbackend/service/mapper/EventoMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/um/eventosbackend/service/mapper/EventoMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/config/application-dev.yml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/config/application-dev.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/config/application-prod.yml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/config/application-prod.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proxy/mvnw" beforeDir="false" afterPath="$PROJECT_DIR$/proxy/mvnw" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proxy/mvnw.cmd" beforeDir="false" afterPath="$PROJECT_DIR$/proxy/mvnw.cmd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proxy/src/main/java/com/um/eventosproxy/config/ProxyConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/proxy/src/main/java/com/um/eventosproxy/config/ProxyConfiguration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proxy/src/main/java/com/um/eventosproxy/config/ProxyProperties.java" beforeDir="false" afterPath="$PROJECT_DIR$/proxy/src/main/java/com/um/eventosproxy/config/ProxyProperties.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proxy/src/main/java/com/um/eventosproxy/service/RedisAsientosService.java" beforeDir="false" afterPath="$PROJECT_DIR$/proxy/src/main/java/com/um/eventosproxy/service/RedisAsientosService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proxy/src/main/java/com/um/eventosproxy/web/rest/AsientosResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/proxy/src/main/java/com/um/eventosproxy/web/rest/AsientosResource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/proxy/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/proxy/src/main/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,31 +36,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultAutoModeForALLUsers.v1": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "features/2-gestionDeEventosYSincronizacion",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/emicoratolo/Escritorio/programacion-2-2025-trabajo-final-Emicora",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultAutoModeForALLUsers.v1&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;features/4-sesionesYAsientos&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/emicoratolo/Escritorio/programacion-2-2025-trabajo-final-Emicora&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.28238.7" />
-        <option value="bundled-js-predefined-d6986cc7102b-a71380e98a7c-JavaScript-IU-252.28238.7" />
+        <option value="bundled-jdk-30f59d01ecdd-cffe25b9f5b3-intellij.indexing.shared.core-IU-253.28294.334" />
+        <option value="bundled-js-predefined-d6986cc7102b-c7e53b3be11b-JavaScript-IU-253.28294.334" />
       </set>
     </attachedChunks>
   </component>
@@ -72,6 +74,14 @@
       <updated>1763643345087</updated>
       <workItem from="1763643347238" duration="1899000" />
       <workItem from="1764879846819" duration="17000" />
+      <workItem from="1765547538030" duration="33000" />
+      <workItem from="1765569855598" duration="71000" />
+      <workItem from="1765571472155" duration="11000" />
+      <workItem from="1765572316539" duration="27000" />
+      <workItem from="1765666332864" duration="42000" />
+      <workItem from="1765719361906" duration="946000" />
+      <workItem from="1765743454802" duration="2921000" />
+      <workItem from="1765805600213" duration="651000" />
     </task>
     <servers />
   </component>
