@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f5e0443c-5f75-47a2-abdc-90d5405f000d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="f5e0443c-5f75-47a2-abdc-90d5405f000d" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -31,7 +29,7 @@
     &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultAutoModeForALLUsers.v1&quot;: &quot;true&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;features/4-sesionesYAsientos&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;features/5-sistemaDeVentasYPersistencia&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/home/emicoratolo/Escritorio/Trabajo_Final_Ing&quot;,
@@ -71,6 +69,8 @@
       <workItem from="1765805600213" duration="651000" />
       <workItem from="1765827282052" duration="14000" />
       <workItem from="1765838079651" duration="17000" />
+      <workItem from="1765890832973" duration="627000" />
+      <workItem from="1766065012916" duration="1000" />
     </task>
     <servers />
   </component>

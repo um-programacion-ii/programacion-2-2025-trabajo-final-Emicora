@@ -49,6 +49,12 @@ public class CatedraEventoDTO implements Serializable {
     @JsonProperty("integrantes")
     private List<CatedraIntegranteDTO> integrantes = new ArrayList<>();
 
+    @JsonProperty("filaAsientos")
+    private Integer filaAsientos;
+
+    @JsonProperty("columnAsientos")
+    private Integer columnAsientos;
+
     public CatedraEventoDTO() {
         // Constructor vacío para Jackson
     }
@@ -140,5 +146,20 @@ public class CatedraEventoDTO implements Serializable {
     public void setIntegrantes(List<CatedraIntegranteDTO> integrantes) {
         this.integrantes = integrantes != null ? integrantes : new ArrayList<>();
     }
-}
 
+    public Integer getFilaAsientos() {
+        return filaAsientos;
+    }
+
+    public void setFilaAsientos(Integer filaAsientos) {
+        this.filaAsientos = filaAsientos;
+    }
+
+    public Integer getColumnAsientos() {
+        return columnAsientos;
+    }
+
+    public void setColumnAsientos(Integer columnAsientos) {
+        this.columnAsientos = columnAsientos;
+    }
+}
