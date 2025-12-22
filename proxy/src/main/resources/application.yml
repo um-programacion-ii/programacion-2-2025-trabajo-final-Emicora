@@ -4,16 +4,13 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:192.168.194.250:9092}
     consumer:
-      group-id: ${KAFKA_CONSUMER_GROUP_ID:proxy-group-${random.value}}
+      group-id: ${KAFKA_CONSUMER_GROUP_ID:emicoratolo-2025}
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "*"
-        spring.json.type.mapping: eventoChange:com.um.eventosproxy.dto.EventoChangeDTO
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
   data:
     redis:
       host: ${REDIS_HOST:192.168.194.250}
@@ -31,6 +28,7 @@ server:
 application:
   backend:
     base-url: ${BACKEND_BASE_URL:http://localhost:8080}
+    sync-events-path: ${BACKEND_SYNC_EVENTS_PATH:/api/admin/eventos/sincronizar}
     jwt:
       secret: ${BACKEND_JWT_SECRET:NTUyYWZmNTFlMjhhNjJiNWM5MWVlMTBlZmIwZGNhNjQ2NjYwNTYyODNmNjkyMDM1ZDM0ZjczN2E5YmY4NDc0MmJlMjI5M2I1NjFjOTY5ZDQ5NzAwNmM5YTUxOGM3YTg5NWZmN2RmNTVjOWE5YTA3YTg3YTU1M2E2NzI3NTJhNDg=}
       token-validity-in-seconds: 86400
@@ -39,7 +37,7 @@ application:
     auth-token: ${CATEDRA_AUTH_TOKEN:eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJlbWljb3JhdG9sbyIsImV4cCI6MTg1MjE0MTg3NiwiYXV0aCI6IlJPTEVfVVNFUiIsImlhdCI6MTc2NTc0MTg3Nn0.voCjhV1VofizQ7VR_JOhQJslZ1HBUzEoMbVx7gye9UWHFYGlDtMwYLlvqMwJ1crc-o-qJfA7Av_C7JGX26hSRw}
   kafka:
     topic:
-      eventos: ${KAFKA_TOPIC_EVENTOS:eventos-changes}
+      eventos: ${KAFKA_TOPIC_EVENTOS:eventos-actualizacion}
 
 logging:
   level:
