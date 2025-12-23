@@ -16,223 +16,55 @@ import androidx.compose.material.icons.filled.EventSeat
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.um.eventosmobile.shared.MobileApi
+import com.um.eventosmobile.core.di.ViewModelFactory
+import com.um.eventosmobile.domain.model.SeatMapDomain
 import com.um.eventosmobile.ui.theme.AccentGreen
 import com.um.eventosmobile.ui.theme.AccentOrange
 import com.um.eventosmobile.ui.theme.AccentRed
-import com.um.eventosmobile.shared.Seat
-import com.um.eventosmobile.shared.SeatStatus
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.hours
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SeatSelectionScreen(
-    api: MobileApi,
+    viewModelFactory: ViewModelFactory,
     eventId: Long,
     refreshKey: Int = 0,
     onBack: () -> Unit,
     onContinue: (Long, List<Pair<String, Int>>, String?) -> Unit
 ) {
-    var seatMap by remember { mutableStateOf<com.um.eventosmobile.shared.SeatMap?>(null) }
-    var eventDetail by remember { mutableStateOf<com.um.eventosmobile.shared.EventDetail?>(null) }
-    var isLoading by remember { mutableStateOf(true) }
-    var error by remember { mutableStateOf<String?>(null) }
-    var isBlocking by remember { mutableStateOf(false) }
-    var selectedSeats by remember { mutableStateOf<Set<Pair<String, Int>>>(emptySet()) }
+    val viewModel = remember(eventId) { viewModelFactory.createSeatSelectionViewModel(eventId) }
+    val uiState by viewModel.uiState.collectAsState()
     val scope = rememberCoroutineScope()
 
-    // Función para construir matriz completa de asientos
-    fun buildCompleteSeatMap(
-        map: com.um.eventosmobile.shared.SeatMap,
-        filas: Int?,
-        columnas: Int?
-    ): com.um.eventosmobile.shared.SeatMap {
-        val totalEsperado = (filas ?: 0) * (columnas ?: 0)
-        
-        // Si el backend ya devolvió todos los asientos (con dimensiones), usarlos directamente
-        if (totalEsperado > 0 && map.asientos.size >= totalEsperado) {
-            android.util.Log.d("SeatSelection", "✅ Backend ya devolvió todos los asientos: ${map.asientos.size} (esperado: $totalEsperado)")
-            val estados = map.asientos.groupBy { it.estado }.mapValues { it.value.size }
-            android.util.Log.d("SeatSelection", "Estados recibidos: $estados")
-            // Verificar que los estados sean correctos
-            val muestra = map.asientos.take(5).map { "${it.fila}-${it.numero}:${it.estado}" }
-            android.util.Log.d("SeatSelection", "Muestra de asientos: $muestra")
-            return map
-        }
-        
-        if (filas == null || columnas == null) {
-            android.util.Log.d("SeatSelection", "⚠️ Sin dimensiones, retornando mapa original con ${map.asientos.size} asientos")
-            return map
-        }
-        
-        // Crear mapa de asientos existentes por clave (fila-numero)
-        // El proxy devuelve filas como números ("1", "2", "3")
-        val asientosByKey = map.asientos.associateBy { "${it.fila}-${it.numero}" }
-        
-        android.util.Log.d("SeatSelection", "🔧 Construyendo matriz completa")
-        android.util.Log.d("SeatSelection", "Asientos del backend: ${map.asientos.size}, dimensiones: $filas x $columnas (total esperado: $totalEsperado)")
-        val estadosBackend = map.asientos.groupBy { it.estado }.mapValues { it.value.size }
-        android.util.Log.d("SeatSelection", "Estados del backend: $estadosBackend")
-        android.util.Log.d("SeatSelection", "Primeros asientos: ${map.asientos.take(5).map { "${it.fila}-${it.numero}:${it.estado}" }}")
-        
-        // El proxy usa números para filas, así que usamos números también
-        // Construir lista completa de asientos
-        val allSeats = mutableListOf<com.um.eventosmobile.shared.Seat>()
-        var asientosConEstado = 0
-        var asientosLibres = 0
-        
-        for (filaNum in 1..filas) {
-            val filaLabel = filaNum.toString() // Usar número como el proxy
-            for (columna in 1..columnas) {
-                val key = "$filaLabel-$columna"
-                val existingSeat = asientosByKey[key]
-                
-                if (existingSeat != null) {
-                    // Usar el asiento del backend con su estado real
-                    allSeats.add(existingSeat)
-                    if (existingSeat.estado != com.um.eventosmobile.shared.SeatStatus.LIBRE) {
-                        asientosConEstado++
-                    } else {
-                        asientosLibres++
-                    }
-                } else {
-                    // Crear asiento libre si no existe en el backend
-                    allSeats.add(
-                        com.um.eventosmobile.shared.Seat(
-                            fila = filaLabel,
-                            numero = columna,
-                            estado = com.um.eventosmobile.shared.SeatStatus.LIBRE,
-                            seleccionado = false
-                        )
-                    )
-                    asientosLibres++
-                }
-            }
-        }
-        
-        android.util.Log.d("SeatSelection", "✅ Matriz completa generada: ${allSeats.size} asientos")
-        val estadosFinales = allSeats.groupBy { it.estado }.mapValues { it.value.size }
-        android.util.Log.d("SeatSelection", "Estados finales: $estadosFinales")
-        android.util.Log.d("SeatSelection", "Asientos con estado del backend: $asientosConEstado, libres generados: $asientosLibres")
-        
-        return com.um.eventosmobile.shared.SeatMap(
-            eventoId = map.eventoId,
-            asientos = allSeats
-        )
+    LaunchedEffect(eventId, refreshKey) {
+        viewModel.load()
     }
 
     fun loadSeatMap() {
-        scope.launch {
-            try {
-                isLoading = true
-                error = null
-                
-                // Primero obtener el detalle del evento para tener las dimensiones
-                val event = api.getEventDetail(eventId)
-                eventDetail = event
-                
-                // Luego obtener el mapa de asientos
-                val map = api.getSeatMap(eventId)
-                android.util.Log.d("SeatSelection", "Mapa cargado: eventoId=${map.eventoId}, asientos=${map.asientos.size}")
-                
-                // Construir matriz completa de asientos
-                val completeMap = buildCompleteSeatMap(map, event.filaAsientos, event.columnAsientos)
-                seatMap = completeMap
-                
-                if (completeMap.asientos.isEmpty()) {
-                    error = "No hay asientos disponibles para este evento"
-                }
-                isLoading = false
-            } catch (e: Exception) {
-                isLoading = false
-                android.util.Log.e("SeatSelection", "Error al cargar mapa: ${e.message}", e)
-                error = when {
-                    e.message?.contains("401") == true -> "Sesión expirada"
-                    e.message?.contains("404") == true -> "Evento no encontrado"
-                    e.message?.contains("500") == true -> "Error del servidor"
-                    else -> e.message ?: "Error al cargar mapa de asientos"
-                }
-            }
-        }
-    }
-
-    // Cargar mapa de asientos
-    LaunchedEffect(eventId, refreshKey) {
-        loadSeatMap()
-    }
-
-    fun toggleSeat(fila: String, numero: Int) {
-        val seatKey = fila to numero
-        selectedSeats = if (selectedSeats.contains(seatKey)) {
-            selectedSeats - seatKey
-        } else {
-            if (selectedSeats.size < 4) {
-                selectedSeats + seatKey
-            } else {
-                selectedSeats // No permitir más de 4
-            }
-        }
+        viewModel.load()
     }
 
     fun blockAndContinue() {
-        if (selectedSeats.isEmpty()) {
-            error = "Debe seleccionar al menos un asiento"
-            return
-        }
-        if (selectedSeats.size > 4) {
-            error = "Puede seleccionar máximo 4 asientos"
-            return
-        }
-
-        scope.launch {
-            try {
-                isBlocking = true
-                error = null
-                
-                // Primero actualizar el evento seleccionado en la sesión
-                api.updateSelectedEvent(eventId)
-                
-                // Luego guardar los asientos seleccionados en la sesión
-                val asientosDto = selectedSeats.map { (fila, numero) ->
-                    com.um.eventosmobile.shared.AsientoSeleccionadoDto(
-                        fila = fila,
-                        numero = numero,
-                        nombrePersona = null,
-                        apellidoPersona = null
-                    )
-                }
-                api.updateSelectedSeats(asientosDto)
-                
-                // Ahora bloquear los asientos (el backend los obtiene de la sesión)
-                val blockResponse = api.blockSeats(eventId)
-                
-                if (blockResponse.exitoso == true) {
-                    // Obtener la expiración de la selección actual
-                    val selection = api.getCurrentSelection(eventId)
-                    val expiresAt = selection?.expiracion?.toString()
-                    
-                    isBlocking = false
-                    onContinue(eventId, selectedSeats.toList(), expiresAt)
-                } else {
-                    error = blockResponse.mensaje ?: "Error al bloquear asientos"
-                    isBlocking = false
-                }
-            } catch (e: Exception) {
-                isBlocking = false
-                error = e.message ?: "Error al bloquear asientos"
+        viewModel.blockAndContinue(
+            onSuccess = { seats, expiresAt ->
+                onContinue(eventId, seats, expiresAt)
+            },
+            onError = { msg ->
+                // Mostrar error en UI
             }
-        }
+        )
     }
 
     Scaffold(
@@ -260,7 +92,7 @@ fun SeatSelectionScreen(
                         .padding(20.dp)
                 ) {
                     Text(
-                        text = "Asientos seleccionados: ${selectedSeats.size}/4",
+                        text = "Asientos seleccionados: ${uiState.selectedSeats.size}/4",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -271,10 +103,10 @@ fun SeatSelectionScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .shadow(elevation = 4.dp, shape = RoundedCornerShape(12.dp)),
-                        enabled = selectedSeats.isNotEmpty() && !isBlocking,
+                        enabled = uiState.selectedSeats.isNotEmpty() && !uiState.isBlocking,
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        if (isBlocking) {
+                        if (uiState.isBlocking) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(20.dp),
                                 color = MaterialTheme.colorScheme.onPrimary
@@ -293,12 +125,12 @@ fun SeatSelectionScreen(
                 .padding(padding)
         ) {
             when {
-                isLoading -> {
+                uiState.isLoading -> {
                     CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
-                error != null && seatMap == null -> {
+                uiState.error != null && uiState.seatMap == null -> {
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -307,17 +139,17 @@ fun SeatSelectionScreen(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = error ?: "Error desconocido",
+                            text = uiState.error?.message ?: "Error desconocido",
                             color = MaterialTheme.colorScheme.error
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        Button(onClick = { loadSeatMap() }) {
+                        Button(onClick = { viewModel.load() }) {
                             Text("Reintentar")
                         }
                     }
                 }
-                seatMap != null -> {
-                    if (seatMap!!.asientos.isEmpty()) {
+                uiState.seatMap != null -> {
+                    if (uiState.seatMap!!.asientos.isEmpty()) {
                         // Lista vacía
                         Column(
                             modifier = Modifier
@@ -393,7 +225,7 @@ fun SeatSelectionScreen(
                             Spacer(modifier = Modifier.height(16.dp))
                             
                             // Error si hay
-                            error?.let {
+                            uiState.error?.let {
                                 Card(
                                     modifier = Modifier.fillMaxWidth(),
                                     colors = CardDefaults.cardColors(
@@ -401,7 +233,7 @@ fun SeatSelectionScreen(
                                     )
                                 ) {
                                     Text(
-                                        text = it,
+                                        text = it.message,
                                         color = MaterialTheme.colorScheme.onErrorContainer,
                                         modifier = Modifier.padding(12.dp)
                                     )
@@ -410,8 +242,8 @@ fun SeatSelectionScreen(
                             }
                             
                         // Mapa de asientos - agrupar por fila y mostrar en grid
-                        val seatsByRow = seatMap!!.asientos.groupBy { it.fila }
-                        val columnas = eventDetail?.columnAsientos ?: seatsByRow.values.maxOfOrNull { it.size } ?: 10
+                        val seatsByRow = uiState.seatMap!!.asientos.groupBy { it.fila }
+                        val columnas = uiState.eventDetail?.columnAsientos ?: seatsByRow.values.maxOfOrNull { it.size } ?: 10
                         
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(columnas),
@@ -433,10 +265,10 @@ fun SeatSelectionScreen(
                                 items(seats.sortedBy { it.numero }) { seat ->
                                     SeatItem(
                                         seat = seat,
-                                        isSelected = selectedSeats.contains(seat.fila to seat.numero),
+                                        isSelected = uiState.selectedSeats.contains(seat.fila to seat.numero),
                                         onClick = {
-                                            if (seat.estado == SeatStatus.LIBRE) {
-                                                toggleSeat(seat.fila, seat.numero)
+                                            if (seat.estado == SeatMapDomain.SeatDomain.SeatStatusDomain.LIBRE || uiState.selectedSeats.contains(seat.fila to seat.numero)) {
+                                                viewModel.toggleSeat(seat.fila, seat.numero, seat.estado)
                                             }
                                         }
                                     )
@@ -453,20 +285,20 @@ fun SeatSelectionScreen(
 
 @Composable
 fun SeatItem(
-    seat: Seat,
+    seat: SeatMapDomain.SeatDomain,
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
     val backgroundColor = when (seat.estado) {
-        SeatStatus.LIBRE -> AccentGreen
-        SeatStatus.OCUPADO -> AccentRed
-        SeatStatus.BLOQUEADO -> AccentOrange
+        SeatMapDomain.SeatDomain.SeatStatusDomain.LIBRE -> AccentGreen
+        SeatMapDomain.SeatDomain.SeatStatusDomain.OCUPADO -> AccentRed
+        SeatMapDomain.SeatDomain.SeatStatusDomain.BLOQUEADO -> AccentOrange
     }
     
     val icon = when {
         isSelected -> Icons.Default.CheckCircle
-        seat.estado == SeatStatus.OCUPADO -> Icons.Default.Person
-        seat.estado == SeatStatus.BLOQUEADO -> Icons.Default.Lock
+        seat.estado == SeatMapDomain.SeatDomain.SeatStatusDomain.OCUPADO -> Icons.Default.Person
+        seat.estado == SeatMapDomain.SeatDomain.SeatStatusDomain.BLOQUEADO -> Icons.Default.Lock
         else -> Icons.Default.EventSeat
     }
     
@@ -483,7 +315,7 @@ fun SeatItem(
         modifier = Modifier
             .size(56.dp)
             .clickable(
-                enabled = seat.estado == SeatStatus.LIBRE,
+                enabled = seat.estado == SeatMapDomain.SeatDomain.SeatStatusDomain.LIBRE || isSelected,
                 onClick = onClick
             ),
         colors = CardDefaults.cardColors(

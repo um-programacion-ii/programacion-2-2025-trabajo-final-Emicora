@@ -9,11 +9,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.um.eventosmobile.core.di.ViewModelFactory
+import com.um.eventosmobile.core.session.SessionManager
 import com.um.eventosmobile.shared.AuthApi
 import com.um.eventosmobile.shared.MobileApi
 import com.um.eventosmobile.shared.TokenStorageAndroid
 import com.um.eventosmobile.shared.SaleResponseDto
 import com.um.eventosmobile.ui.*
+import com.um.eventosmobile.ui.events.EventListScreen
+import com.um.eventosmobile.ui.login.LoginScreen
 import com.um.eventosmobile.ui.theme.EventosMobileTheme
 import kotlinx.coroutines.launch
 
@@ -28,6 +33,7 @@ class MainActivity : ComponentActivity() {
         
         val authApi = AuthApi(backendUrl)
         val tokenStorage = TokenStorageAndroid(this)
+        val sessionManager = SessionManager()
         
         setContent {
             EventosMobileTheme {
@@ -35,26 +41,31 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    var token by remember { mutableStateOf<String?>(null) }
+                    val token by sessionManager.token.collectAsState()
                     var isLoadingToken by remember { mutableStateOf(true) }
                     val scope = rememberCoroutineScope()
                     
                     // Cargar token guardado al iniciar
                     LaunchedEffect(Unit) {
-                        token = tokenStorage.getToken()
+                        val savedToken = tokenStorage.getToken()
+                        sessionManager.setToken(savedToken)
                         isLoadingToken = false
                     }
                     
-                    // MobileApi que usa el token actual
+                    // MobileApi que usa el token actual del SessionManager
                     val mobileApi = remember(token) {
                         MobileApi(
                             baseUrl = backendUrl,
-                            tokenProvider = { token }
+                            tokenProvider = { sessionManager.getCurrentToken() }
                         )
                     }
                     
+                    // Factory para ViewModels
+                    val viewModelFactory = remember(authApi, mobileApi, sessionManager) {
+                        ViewModelFactory(authApi, mobileApi, sessionManager)
+                    }
+                    
                     if (isLoadingToken) {
-                        // Mostrar indicador de carga mientras se verifica el token
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
@@ -62,14 +73,10 @@ class MainActivity : ComponentActivity() {
                             CircularProgressIndicator()
                         }
                     } else if (token == null) {
-                        // Mostrar pantalla de login si no hay token
                         LoginScreen(
-                            authApi = authApi,
-                            onLoginSuccess = { newToken ->
-                                scope.launch {
-                                    tokenStorage.saveToken(newToken)
-                                    token = newToken
-                                }
+                            viewModel = viewModel(factory = viewModelFactory),
+                            onLoginSuccess = {
+                                // El ViewModel ya actualizó el SessionManager
                             }
                         )
                     } else {
@@ -80,14 +87,14 @@ class MainActivity : ComponentActivity() {
                         when (val screen = currentScreen) {
                             is Screen.EventList -> {
                                 EventListScreen(
-                                    api = mobileApi,
+                                    viewModel = viewModel(factory = viewModelFactory),
                                     onEventClick = { eventId ->
                                         currentScreen = Screen.EventDetail(eventId)
                                     },
                                     onLogout = {
                                         scope.launch {
                                             tokenStorage.clearToken()
-                                            token = null
+                                            sessionManager.clearSession()
                                         }
                                     }
                                 )
@@ -111,7 +118,7 @@ class MainActivity : ComponentActivity() {
                             }
                             is Screen.SeatSelection -> {
                                 SeatSelectionScreen(
-                                    api = mobileApi,
+                                    viewModelFactory = viewModelFactory,
                                     eventId = screen.eventId,
                                     refreshKey = screen.refreshKey,
                                     onBack = { currentScreen = Screen.EventDetail(screen.eventId) },
@@ -184,7 +191,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 // Sealed class para navegación
 sealed class Screen {
     object EventList : Screen()
@@ -204,3 +210,4 @@ sealed class Screen {
         val message: String
     ) : Screen()
 }
+

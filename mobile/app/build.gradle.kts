@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
     
     // Icons
     implementation("androidx.compose.material:material-icons-extended")

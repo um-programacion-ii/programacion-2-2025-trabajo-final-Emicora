@@ -1,27 +1,27 @@
 {
     "logs": [
         {
-            "outputFile": "com.um.eventosmobile.app-mergeDebugResources-49:/values-my/values-my.xml",
+            "outputFile": "com.um.eventosmobile.app-mergeDebugResources-50:/values-my/values-my.xml",
             "map": [
                 {
-                    "source": "/home/emicoratolo/.gradle/caches/8.13/transforms/6bdd45f2e33c80676a7386eb65d394b7/transformed/core-1.17.0/res/values-my/values-my.xml",
+                    "source": "/home/emicoratolo/Escritorio/cliente_producto/caches/8.13/transforms/eebf61400c7bc9b6e46f6c6d168eafbd/transformed/foundation-release/res/values-my/values-my.xml",
                     "from": {
-                        "startLines": "2,3,4,5,6,7,8,9",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,158,262,365,467,572,678,797",
-                        "endColumns": "102,103,102,101,104,105,118,100",
-                        "endOffsets": "153,257,360,462,567,673,792,893"
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,164",
+                        "endColumns": "108,107",
+                        "endOffsets": "159,267"
                     },
                     "to": {
-                        "startLines": "2,3,4,5,6,7,8,81",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "105,208,312,415,517,622,728,8524",
-                        "endColumns": "102,103,102,101,104,105,118,100",
-                        "endOffsets": "203,307,410,512,617,723,842,8620"
+                        "startLines": "85,86",
+                        "startColumns": "4,4",
+                        "startOffsets": "8898,9007",
+                        "endColumns": "108,107",
+                        "endOffsets": "9002,9110"
                     }
                 },
                 {
-                    "source": "/home/emicoratolo/.gradle/caches/8.13/transforms/6162da0fdcd2e70e574c482b3ebed350/transformed/material3-release/res/values-my/values-my.xml",
+                    "source": "/home/emicoratolo/Escritorio/cliente_producto/caches/8.13/transforms/6162da0fdcd2e70e574c482b3ebed350/transformed/material3-release/res/values-my/values-my.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -38,7 +38,24 @@
                     }
                 },
                 {
-                    "source": "/home/emicoratolo/.gradle/caches/8.13/transforms/f9288b4f5a447d3949a688d5453d9bf1/transformed/ui-release/res/values-my/values-my.xml",
+                    "source": "/home/emicoratolo/Escritorio/cliente_producto/caches/8.13/transforms/6bdd45f2e33c80676a7386eb65d394b7/transformed/core-1.17.0/res/values-my/values-my.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,158,262,365,467,572,678,797",
+                        "endColumns": "102,103,102,101,104,105,118,100",
+                        "endOffsets": "153,257,360,462,567,673,792,893"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5,6,7,8,81",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "105,208,312,415,517,622,728,8524",
+                        "endColumns": "102,103,102,101,104,105,118,100",
+                        "endOffsets": "203,307,410,512,617,723,842,8620"
+                    }
+                },
+                {
+                    "source": "/home/emicoratolo/Escritorio/cliente_producto/caches/8.13/transforms/204ad62d57b414b153faf4743fc5dddc/transformed/ui-release/res/values-my/values-my.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -52,23 +69,6 @@
                         "startOffsets": "847,941,1029,1133,1237,1320,1404,7882,7971,8053,8140,8226,8301,8378,8451,8625,8706,8772",
                         "endColumns": "93,87,103,103,82,83,98,88,81,86,85,74,76,72,72,80,65,125",
                         "endOffsets": "936,1024,1128,1232,1315,1399,1498,7966,8048,8135,8221,8296,8373,8446,8519,8701,8767,8893"
-                    }
-                },
-                {
-                    "source": "/home/emicoratolo/.gradle/caches/8.13/transforms/da123fb5c93e05c786b518e9d9a4ec9a/transformed/foundation-release/res/values-my/values-my.xml",
-                    "from": {
-                        "startLines": "2,3",
-                        "startColumns": "4,4",
-                        "startOffsets": "55,164",
-                        "endColumns": "108,107",
-                        "endOffsets": "159,267"
-                    },
-                    "to": {
-                        "startLines": "85,86",
-                        "startColumns": "4,4",
-                        "startOffsets": "8898,9007",
-                        "endColumns": "108,107",
-                        "endOffsets": "9002,9110"
                     }
                 }
             ]

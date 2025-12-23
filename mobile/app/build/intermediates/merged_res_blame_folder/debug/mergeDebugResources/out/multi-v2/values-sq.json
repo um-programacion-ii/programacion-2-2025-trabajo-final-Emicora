@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.um.eventosmobile.app-mergeDebugResources-49:/values-sq/values-sq.xml",
+            "outputFile": "com.um.eventosmobile.app-mergeDebugResources-50:/values-sq/values-sq.xml",
             "map": [
                 {
-                    "source": "/home/emicoratolo/.gradle/caches/8.13/transforms/da123fb5c93e05c786b518e9d9a4ec9a/transformed/foundation-release/res/values-sq/values-sq.xml",
+                    "source": "/home/emicoratolo/Escritorio/cliente_producto/caches/8.13/transforms/eebf61400c7bc9b6e46f6c6d168eafbd/transformed/foundation-release/res/values-sq/values-sq.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",
@@ -21,7 +21,7 @@
                     }
                 },
                 {
-                    "source": "/home/emicoratolo/.gradle/caches/8.13/transforms/6bdd45f2e33c80676a7386eb65d394b7/transformed/core-1.17.0/res/values-sq/values-sq.xml",
+                    "source": "/home/emicoratolo/Escritorio/cliente_producto/caches/8.13/transforms/6bdd45f2e33c80676a7386eb65d394b7/transformed/core-1.17.0/res/values-sq/values-sq.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",
@@ -38,7 +38,7 @@
                     }
                 },
                 {
-                    "source": "/home/emicoratolo/.gradle/caches/8.13/transforms/f9288b4f5a447d3949a688d5453d9bf1/transformed/ui-release/res/values-sq/values-sq.xml",
+                    "source": "/home/emicoratolo/Escritorio/cliente_producto/caches/8.13/transforms/204ad62d57b414b153faf4743fc5dddc/transformed/ui-release/res/values-sq/values-sq.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -55,7 +55,7 @@
                     }
                 },
                 {
-                    "source": "/home/emicoratolo/.gradle/caches/8.13/transforms/6162da0fdcd2e70e574c482b3ebed350/transformed/material3-release/res/values-sq/values-sq.xml",
+                    "source": "/home/emicoratolo/Escritorio/cliente_producto/caches/8.13/transforms/6162da0fdcd2e70e574c482b3ebed350/transformed/material3-release/res/values-sq/values-sq.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
