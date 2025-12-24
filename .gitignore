@@ -42,6 +42,9 @@ out/
 .idea/modules.xml
 .idea/scopes/
 .idea/vcs.xml
+.idea/caches/
+.idea/libraries/
+.idea/artifacts/
 *.swp
 *.swo
 
@@ -69,10 +72,22 @@ nbdist/
 
 # Gradle
 .gradle/
+**/.gradle/
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+
+# Gradle cache y archivos temporales
+**/.gradle/*/executionHistory/
+**/.gradle/*/fileHashes/
+**/.gradle/*/buildOutputCleanup/
+**/.gradle/file-system.probe
+**/.gradle/*.lock
+**/.gradle/*/fileHashes.bin
+**/.gradle/*/fileHashes.lock
+**/.gradle/*/executionHistory.lock
+**/.gradle/buildOutputCleanup.lock
 
 # Android Studio
 *.apk
@@ -265,6 +280,7 @@ lerna-debug.log*
 **/.gradle/
 **/.m2/
 **/.cache/
+**/.idea/caches/
 
 # Archivos de test
 **/test-results/
