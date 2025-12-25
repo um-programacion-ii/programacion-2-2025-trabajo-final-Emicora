@@ -173,5 +173,88 @@ class AuthApi(private val backendUrl: String) {
             }
         }
     }
+
+    suspend fun register(
+        login: String,
+        password: String,
+        firstName: String? = null,
+        lastName: String? = null,
+        email: String? = null,
+        langKey: String = "es"
+    ) {
+        try {
+            val response: HttpResponse = try {
+                client.post("$backendUrl/api/register") {
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        RegisterRequestDto(
+                            login = login,
+                            password = password,
+                            firstName = firstName,
+                            lastName = lastName,
+                            email = email,
+                            langKey = langKey
+                        )
+                    )
+                }
+            } catch (e: io.ktor.client.plugins.ClientRequestException) {
+                when (e.response.status.value) {
+                    400 -> {
+                        // Intentar leer el mensaje de error del cuerpo de la respuesta
+                        val errorBody = try {
+                            e.response.body<String>()
+                        } catch (ex: Exception) {
+                            "Datos de registro inválidos"
+                        }
+                        throw AuthException("Datos de registro inválidos: $errorBody", 400)
+                    }
+                    else -> throw AuthException("Error al registrar usuario", e.response.status.value)
+                }
+            } catch (e: io.ktor.client.plugins.ServerResponseException) {
+                throw AuthException("Error del servidor. Intente más tarde", e.response.status.value)
+            }
+
+            // Verificar código de estado HTTP
+            val statusCode = response.status.value
+            when {
+                statusCode == 201 -> {
+                    // Registro exitoso (201 Created)
+                    return
+                }
+                statusCode == 400 -> {
+                    val errorBody = try {
+                        response.body<String>()
+                    } catch (ex: Exception) {
+                        "Datos de registro inválidos"
+                    }
+                    throw AuthException("Datos de registro inválidos: $errorBody", 400)
+                }
+                statusCode >= 500 -> {
+                    throw AuthException("Error del servidor. Intente más tarde", statusCode)
+                }
+                statusCode < 200 || statusCode >= 300 -> {
+                    throw AuthException("Error al registrar usuario", statusCode)
+                }
+            }
+        } catch (e: AuthException) {
+            throw e
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            val message = e.message ?: "Error desconocido"
+            when {
+                message.contains("Unable to resolve host", ignoreCase = true) ||
+                message.contains("Failed to connect", ignoreCase = true) ||
+                message.contains("Network", ignoreCase = true) ||
+                message.contains("timeout", ignoreCase = true) ||
+                message.contains("Connection", ignoreCase = true) -> {
+                    throw AuthException("Error de conexión. Verifique su conexión a internet", null)
+                }
+                else -> {
+                    throw AuthException("Error al registrar usuario. Intente nuevamente", null)
+                }
+            }
+        }
+    }
 }
 

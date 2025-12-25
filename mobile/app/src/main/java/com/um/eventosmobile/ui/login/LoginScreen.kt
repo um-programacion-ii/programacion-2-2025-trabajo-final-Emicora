@@ -26,7 +26,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = viewModel(),
-    onLoginSuccess: () -> Unit
+    onLoginSuccess: () -> Unit,
+    onNavigateToRegister: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var username by remember { mutableStateOf("") }
@@ -253,6 +254,18 @@ fun LoginScreen(
                             modifier = Modifier.padding(vertical = 4.dp)
                         )
                     }
+                }
+
+                // Link para ir a registro
+                TextButton(
+                    onClick = onNavigateToRegister,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        "¿No tienes cuenta? Regístrate",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
         }

@@ -19,6 +19,7 @@ import com.um.eventosmobile.shared.SaleResponseDto
 import com.um.eventosmobile.ui.*
 import com.um.eventosmobile.ui.events.EventListScreen
 import com.um.eventosmobile.ui.login.LoginScreen
+import com.um.eventosmobile.ui.register.RegisterScreen
 import com.um.eventosmobile.ui.theme.EventosMobileTheme
 import kotlinx.coroutines.launch
 
@@ -33,7 +34,7 @@ class MainActivity : ComponentActivity() {
         
         val authApi = AuthApi(backendUrl)
         val tokenStorage = TokenStorageAndroid(this)
-        val sessionManager = SessionManager()
+        val sessionManager = SessionManager(tokenStorage)
         
         setContent {
             EventosMobileTheme {
@@ -47,8 +48,7 @@ class MainActivity : ComponentActivity() {
                     
                     // Cargar token guardado al iniciar
                     LaunchedEffect(Unit) {
-                        val savedToken = tokenStorage.getToken()
-                        sessionManager.setToken(savedToken)
+                        sessionManager.loadToken()
                         isLoadingToken = false
                     }
                     
@@ -73,12 +73,31 @@ class MainActivity : ComponentActivity() {
                             CircularProgressIndicator()
                         }
                     } else if (token == null) {
-                        LoginScreen(
-                            viewModel = viewModel(factory = viewModelFactory),
-                            onLoginSuccess = {
-                                // El ViewModel ya actualizó el SessionManager
-                            }
-                        )
+                        // Navegación entre login y registro
+                        var showRegister by remember { mutableStateOf(false) }
+                        
+                        if (showRegister) {
+                            RegisterScreen(
+                                viewModel = viewModel(factory = viewModelFactory),
+                                onRegisterSuccess = {
+                                    // Después del registro exitoso, volver al login
+                                    showRegister = false
+                                },
+                                onNavigateToLogin = {
+                                    showRegister = false
+                                }
+                            )
+                        } else {
+                            LoginScreen(
+                                viewModel = viewModel(factory = viewModelFactory),
+                                onLoginSuccess = {
+                                    // El ViewModel ya actualizó el SessionManager
+                                },
+                                onNavigateToRegister = {
+                                    showRegister = true
+                                }
+                            )
+                        }
                     } else {
                         // Navegación entre pantallas
                         var currentScreen by remember { mutableStateOf<Screen>(Screen.EventList) }
@@ -93,7 +112,6 @@ class MainActivity : ComponentActivity() {
                                     },
                                     onLogout = {
                                         scope.launch {
-                                            tokenStorage.clearToken()
                                             sessionManager.clearSession()
                                         }
                                     }

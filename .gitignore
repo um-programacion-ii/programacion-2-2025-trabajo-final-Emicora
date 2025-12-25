@@ -1,288 +1,159 @@
-# ============================================
-# Archivos del Sistema Operativo
-# ============================================
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-._*
-
-# Windows
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
-*.lnk
-
-# Linux
-*~
-.directory
-.Trash-*
-
-# ============================================
-# IDEs y Editores
-# ============================================
-
-# IntelliJ IDEA / Android Studio
-.idea/
-*.iml
-*.iws
-*.ipr
-out/
-.idea_modules/
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/dictionaries/
-.idea/shelf/
-.idea/compiler.xml
-.idea/copyright/
-.idea/encodings.xml
-.idea/misc.xml
-.idea/modules.xml
-.idea/scopes/
-.idea/vcs.xml
-.idea/caches/
-.idea/libraries/
-.idea/artifacts/
-*.swp
-*.swo
-
-# Eclipse
+### STS ###
+.apt_generated
 .classpath
+.factorypath
 .project
-.settings/
-bin/
-.metadata/
+.settings
+.springBeans
+.sts4-cache
 
-# VS Code
-.vscode/
-*.code-workspace
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+!.idea/codeStyles/
+!.idea/inspectionProfiles/
+!.idea/runConfigurations/
+!.idea/tasks.xml
+!.idea/vcs.xml
+!.idea/workspace.xml
+!.idea/*.xml
 
-# NetBeans
-nbproject/
-nbbuild/
-dist/
-nbdist/
-.nb-gradle/
-
-# ============================================
-# Android / Kotlin Multiplatform
-# ============================================
-
-# Gradle
-.gradle/
-**/.gradle/
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
 build/
-!gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-# Gradle cache y archivos temporales
-**/.gradle/*/executionHistory/
-**/.gradle/*/fileHashes/
-**/.gradle/*/buildOutputCleanup/
-**/.gradle/file-system.probe
-**/.gradle/*.lock
-**/.gradle/*/fileHashes.bin
-**/.gradle/*/fileHashes.lock
-**/.gradle/*/executionHistory.lock
-**/.gradle/buildOutputCleanup.lock
+### VS Code ###
+.vscode/
 
-# Android Studio
-*.apk
-*.ap_
-*.aab
-*.dex
-*.class
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
-hs_err_pid*
+### Android/Mobile Cache ###
+mobile/.gradle/
+mobile/app/build/
+mobile/shared/build/
+mobile/build/
+mobile/.idea/
+mobile/local.properties
+mobile/*.iml
+mobile/.cxx/
+mobile/.externalNativeBuild/
+mobile/app/.cxx/
+mobile/app/.externalNativeBuild/
+mobile/**/build/
+mobile/**/.gradle/
+mobile/**/cache/
+mobile/**/.cache/
+mobile/**/caches/
+mobile/**/.kotlin/
+mobile/**/intermediates/
+mobile/**/generated/
+mobile/**/tmp/
+mobile/**/outputs/
+mobile/**/*.dex
+mobile/**/*.apk
+mobile/**/*.ap_
+mobile/**/*.aab
+mobile/**/cacheable/
+mobile/**/*.tab
+mobile/**/*.tab.*
+mobile/**/*.bin
+mobile/**/.transforms/
 
-# Local configuration file (sdk path, etc)
-local.properties
-*.keystore
-!debug.keystore
-
-# Android Profiling
-*.hprof
-
-# Kotlin
-*.kt.swp
-*.kt~
-*.kt.bak
-
-# ============================================
-# Java / Maven
-# ============================================
-
-# Maven
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
-
-# Compiled class files
-*.class
-
-# Log files
-*.log
-
-# Package Files
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# Virtual machine crash logs
-hs_err_pid*
-
-# ============================================
-# Node.js / npm (si hay frontend)
-# ============================================
-
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-.pnpm-debug.log*
-
-# Dependency directories
-jspm_packages/
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# parcel-bundler cache
-.cache
-.parcel-cache
-
-# Next.js
-.next/
-out/
-
-# Nuxt.js
-.nuxt/
-dist/
-
-# ============================================
-# Docker
-# ============================================
-
-# Docker
-*.dockerignore
-docker-compose.override.yml
-
-# ============================================
-# Base de Datos
-# ============================================
-
-# SQLite
-*.db
-*.sqlite
-*.sqlite3
-
-# H2
-*.h2.db
-*.mv.db
-*.trace.db
-
-# ============================================
-# Archivos Temporales y de Backup
-# ============================================
-
-# Backup files
-*.bak
-*.backup
-*~
-*.swp
-*.tmp
-*.temp
-
-# ============================================
-# Archivos Sensibles
-# ============================================
-
-# Credenciales y configuración local
-*.env
-*.env.local
-*.env.*.local
-secrets.yml
-application-local.yml
-application-local.properties
-
-# Certificados y claves
-*.pem
-*.key
-*.crt
-*.p12
-*.jks
-!debug.keystore
-
-# ============================================
-# Logs
-# ============================================
-
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-
-# ============================================
-# Archivos Específicos del Proyecto
-# ============================================
-
-# APKs generados
-*.apk
-*.aab
-
-# Archivos de build de Android
-**/build/
-**/app/build/
-**/shared/build/
-
-# Archivos de compilación
-**/target/
-**/out/
-**/bin/
-**/dist/
-
-# Archivos de caché
-**/.gradle/
-**/.m2/
+### Cache directories (general) ###
+**/cache/
 **/.cache/
+**/caches/
+**/.kotlin/
+**/tmp/
+**/temp/
+**/.tmp/
+**/.temp/
+
+### Node.js Cache ###
+**/node_modules/
+**/.npm/
+**/.node/
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/.yarn/
+**/.pnp/
+**/.pnp.js
+
+### Gradle Cache ###
+**/.gradle/
+**/gradle-app.setting
+**/!gradle-wrapper.jar
+**/gradlew
+**/gradlew.bat
+**/gradle-wrapper.properties
+
+### Maven Cache ###
+**/target/
+**/.mvn/
+**/mvnw
+**/mvnw.cmd
+**/.m2/
+
+### IntelliJ Cache ###
+**/.idea/
+**/*.iml
+**/*.iws
+**/*.ipr
 **/.idea/caches/
+**/.idea/modules.xml
+**/.idea/workspace.xml
+**/.idea/tasks.xml
+**/.idea/dictionaries/
+**/.idea/shelf/
 
-# Archivos de test
-**/test-results/
-**/test-output/
+### Build outputs ###
+**/build/
+**/out/
+**/dist/
+**/bin/
+**/classes/
+**/generated/
+**/intermediates/
+**/outputs/
 
+### Android specific cache ###
+**/.cxx/
+**/.externalNativeBuild/
+**/.android/
+**/local.properties
+**/proguard/
+**/lint-results*.xml
+**/lint-results*.html
+**/lint-results*.json
+**/lint-results*.txt
+
+### Kotlin Cache ###
+**/.kotlin/
+**/kotlin/
+**/*.kotlin_module
+
+### Logs ###
+**/*.log
+**/*.log.*
+**/logs/
+**/.logs/
+
+### OS specific ###
+**/.DS_Store
+**/Thumbs.db
+**/.Spotlight-V100/
+**/.Trashes/
+**/._*
