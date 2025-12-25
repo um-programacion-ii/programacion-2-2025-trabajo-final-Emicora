@@ -10,6 +10,7 @@ import com.um.eventosmobile.shared.AuthApi
 import com.um.eventosmobile.shared.MobileApi
 import com.um.eventosmobile.ui.events.EventListViewModel
 import com.um.eventosmobile.ui.login.LoginViewModel
+import com.um.eventosmobile.ui.register.RegisterViewModel
 import com.um.eventosmobile.ui.SeatSelectionViewModel
 
 /**
@@ -28,9 +29,12 @@ class ViewModelFactory(
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when {
-            modelClass.isAssignableFrom(LoginViewModel::class.java) -> {
-                LoginViewModel(authApi, sessionManager) as T
-            }
+                    modelClass.isAssignableFrom(LoginViewModel::class.java) -> {
+                        LoginViewModel(authApi, sessionManager) as T
+                    }
+                    modelClass.isAssignableFrom(RegisterViewModel::class.java) -> {
+                        RegisterViewModel(authApi) as T
+                    }
             modelClass.isAssignableFrom(EventListViewModel::class.java) -> {
                 EventListViewModel(getEventsUseCase) as T
             }

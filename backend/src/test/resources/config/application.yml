@@ -108,7 +108,16 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+application:
+  catedra:
+    base-url: http://192.168.194.250:8080
+    registration-endpoint: /api/v1/agregar_usuario
+    auth-token: test-token
+    connect-timeout-ms: 5000
+    read-timeout-ms: 10000
+  proxy:
+    base-url: http://localhost:8081
+
 management:
   health:
     mail:

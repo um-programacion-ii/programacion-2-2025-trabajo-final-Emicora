@@ -36,6 +36,7 @@ public class RedisWarmupService {
     /**
      * Ejecuta el warm-up de Redis de forma asíncrona.
      * Intenta bloquear 1 asiento de cada evento activo hasta lograrlo.
+     * Intenta con TODOS los asientos disponibles hasta encontrar uno que pueda bloquear.
      */
     @Async
     public void warmupRedis() {
@@ -68,12 +69,12 @@ public class RedisWarmupService {
                     continue;
                 }
 
-                if (intentarBloquearAsiento(eventoId)) {
+                if (intentarBloquearAsiento(eventoId, evento)) {
                     exitosos++;
                     LOG.debug("Warm-up exitoso para eventoId: {}", eventoId);
                 } else {
                     fallidos++;
-                    LOG.warn("No se pudo hacer warm-up para eventoId: {}", eventoId);
+                    LOG.warn("No se pudo hacer warm-up para eventoId: {} (todos los asientos pueden estar ocupados o el proxy no está disponible)", eventoId);
                 }
             }
 
@@ -85,11 +86,13 @@ public class RedisWarmupService {
 
     /**
      * Intenta bloquear un asiento del evento hasta lograrlo o quedarse sin asientos.
+     * Intenta con TODOS los asientos disponibles hasta encontrar uno que pueda bloquear.
      * 
      * @param eventoId ID del evento en la cátedra
+     * @param evento Entidad Evento con información de dimensiones
      * @return true si logró bloquear un asiento, false en caso contrario
      */
-    private boolean intentarBloquearAsiento(Long eventoId) {
+    private boolean intentarBloquearAsiento(Long eventoId, com.um.eventosbackend.domain.Evento evento) {
         try {
             // Obtener mapa de asientos
             MapaAsientosDTO mapa = proxyAsientosService.obtenerMapaAsientos(eventoId);
@@ -106,45 +109,59 @@ public class RedisWarmupService {
             // Intentar bloquear un asiento por defecto para inicializar Redis
             if (asientos == null || asientos.isEmpty()) {
                 LOG.info("Mapa de asientos vacío para eventoId: {} (Redis sin inicializar), intentando bloquear asiento por defecto", eventoId);
-                // Intentar con varios asientos comunes: fila 1 columna 1, fila 1 columna 2, etc.
-                // También intentar con diferentes filas por si acaso
-                for (int fila = 1; fila <= 3; fila++) {
-                    for (int columna = 1; columna <= 5; columna++) {
+                
+                // Usar dimensiones del evento si están disponibles, sino usar valores por defecto
+                Integer maxFilas = evento.getFilaAsiento();
+                Integer maxColumnas = evento.getColumnAsiento();
+                
+                // Si no hay dimensiones, usar un rango amplio por defecto
+                if (maxFilas == null || maxFilas <= 0) {
+                    maxFilas = 50; // Rango amplio por defecto
+                }
+                if (maxColumnas == null || maxColumnas <= 0) {
+                    maxColumnas = 50; // Rango amplio por defecto
+                }
+                
+                LOG.debug("Intentando warm-up con dimensiones: {} filas x {} columnas para eventoId: {}", maxFilas, maxColumnas, eventoId);
+                
+                // Intentar con TODOS los asientos posibles según las dimensiones
+                for (int fila = 1; fila <= maxFilas; fila++) {
+                    for (int columna = 1; columna <= maxColumnas; columna++) {
                         if (bloquearAsiento(eventoId, String.valueOf(fila), columna)) {
                             LOG.info("✅ Warm-up exitoso para eventoId: {} usando asiento por defecto (fila {}, columna {})", eventoId, fila, columna);
                             return true;
                         }
                     }
                 }
-                LOG.warn("⚠️ No se pudo bloquear ningún asiento por defecto para eventoId: {} (puede que todos estén ocupados, el evento no tenga asientos, o el proxy no esté disponible)", eventoId);
+                LOG.warn("⚠️ No se pudo bloquear ningún asiento para eventoId: {} después de intentar {} filas x {} columnas (puede que todos estén ocupados, el evento no tenga asientos, o el proxy no esté disponible)", 
+                    eventoId, maxFilas, maxColumnas);
                 return false;
             }
 
-            // Buscar el primer asiento LIBRE en el mapa
+            // Buscar el primer asiento LIBRE en el mapa - intentar con TODOS los asientos disponibles
             int intentos = 0;
-            int maxIntentos = Math.min(asientos.size(), 20); // Intentar máximo 20 asientos
+            int asientosLibres = 0;
             
             for (MapaAsientosDTO.AsientoDTO asiento : asientos) {
-                if (intentos >= maxIntentos) {
-                    break;
-                }
-                
                 if (asiento.getEstado() == MapaAsientosDTO.AsientoDTO.EstadoAsiento.LIBRE && 
                     asiento.getFila() != null && 
                     asiento.getNumero() != null) {
                     
+                    asientosLibres++;
                     intentos++;
+                    
                     // Intentar bloquear este asiento
                     if (bloquearAsiento(eventoId, asiento.getFila(), asiento.getNumero())) {
-                        LOG.debug("Warm-up exitoso para eventoId: {} usando asiento (fila {}, columna {})", 
-                            eventoId, asiento.getFila(), asiento.getNumero());
+                        LOG.info("✅ Warm-up exitoso para eventoId: {} usando asiento (fila {}, columna {}) después de {} intentos", 
+                            eventoId, asiento.getFila(), asiento.getNumero(), intentos);
                         return true;
                     }
                     // Si falla, continuar con el siguiente asiento
                 }
             }
 
-            LOG.warn("No se encontró ningún asiento libre para bloquear en eventoId: {} después de {} intentos", eventoId, intentos);
+            LOG.warn("No se encontró ningún asiento libre para bloquear en eventoId: {} después de intentar con {} asientos libres (total {} asientos en el mapa)", 
+                eventoId, intentos, asientos.size());
             return false;
         } catch (Exception e) {
             LOG.error("Error al intentar bloquear asiento para eventoId: {}", eventoId, e);
