@@ -8,20 +8,33 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.um.eventosbackend.IntegrationTest;
+import com.um.eventosbackend.domain.Evento;
 import com.um.eventosbackend.domain.User;
+import com.um.eventosbackend.repository.EventoRepository;
 import com.um.eventosbackend.repository.UserRepository;
+import com.um.eventosbackend.service.dto.BloqueoAsientosResponseDTO;
+import com.um.eventosbackend.service.dto.MapaAsientosDTO;
 import com.um.eventosbackend.web.rest.vm.LoginVM;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Test de integración end-to-end del flujo completo de venta:
@@ -47,8 +60,16 @@ class FlujoCompletoVentaIT {
     private UserRepository userRepository;
 
     @Autowired
+    private EventoRepository eventoRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    @Qualifier("proxyRestTemplate")
+    private RestTemplate proxyRestTemplate;
+
+    private MockRestServiceServer mockProxyServer;
     private String jwtToken;
 
     @BeforeEach
@@ -64,6 +85,27 @@ class FlujoCompletoVentaIT {
         testUser.setPassword(passwordEncoder.encode(TEST_USER_PASSWORD));
         testUser.setActivated(true);
         userRepository.saveAndFlush(testUser);
+
+        // Crear evento de prueba si no existe
+        if (eventoRepository.count() == 0) {
+            Evento evento = new Evento();
+            evento.setEventoIdCatedra(999L); // ID de prueba
+            evento.setTitulo("Evento de Prueba - Test de Integración");
+            evento.setDescripcion("Este es un evento de prueba creado para el test de integración");
+            evento.setResumen("Evento de prueba");
+            // Fecha futura (mañana) para que no esté expirado
+            evento.setFecha(Instant.now().plus(1, ChronoUnit.DAYS));
+            evento.setDireccion("Dirección de Prueba 123");
+            evento.setPrecio(new BigDecimal("100.00"));
+            evento.setCancelado(false);
+            // Configurar dimensiones de asientos
+            evento.setFilaAsiento(10);
+            evento.setColumnAsiento(10);
+            eventoRepository.saveAndFlush(evento);
+        }
+
+        // Configurar mock del proxy
+        mockProxyServer = MockRestServiceServer.createServer(proxyRestTemplate);
     }
 
     @Test
@@ -139,7 +181,47 @@ class FlujoCompletoVentaIT {
 
         String detalleContent = detalleResult.getResponse().getContentAsString();
         JsonNode detalleEvento = objectMapper.readTree(detalleContent);
+        
+        // Obtener eventoIdCatedra del detalle (necesario para la venta)
+        Long eventoIdCatedra = detalleEvento.has("eventoIdCatedra") 
+            ? detalleEvento.get("eventoIdCatedra").asLong() 
+            : eventoId; // Fallback al ID interno si no tiene eventoIdCatedra
+        
         System.out.println("✅ Detalle del evento obtenido: " + detalleEvento.get("titulo").asText());
+        System.out.println("   🆔 ID Cátedra: " + eventoIdCatedra);
+
+        // ============================================
+        // CONFIGURAR TODOS LOS MOCKS DEL PROXY ANTES DE HACER REQUESTS
+        // ============================================
+        // Mockear respuesta del proxy para obtener mapa de asientos
+        // Nota: El servicio usa el ID interno directamente para llamar al proxy
+        MapaAsientosDTO mapaMock = new MapaAsientosDTO();
+        mapaMock.setEventoId(eventoId); // El proxy devuelve el mismo ID que recibe
+        mapaMock.setAsientos(new ArrayList<>());
+        // Crear algunos asientos de prueba
+        for (int fila = 1; fila <= 10; fila++) {
+            for (int col = 1; col <= 10; col++) {
+                MapaAsientosDTO.AsientoDTO asiento = new MapaAsientosDTO.AsientoDTO();
+                asiento.setFila(String.valueOf(fila));
+                asiento.setNumero(col);
+                asiento.setEstado(MapaAsientosDTO.AsientoDTO.EstadoAsiento.LIBRE);
+                asiento.setSeleccionado(false);
+                mapaMock.getAsientos().add(asiento);
+            }
+        }
+
+        // El RestTemplate tiene rootUri configurado, así que el mock debe esperar la URL completa
+        mockProxyServer
+            .expect(org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo("http://localhost:8081/api/asientos/evento/" + eventoId))
+            .andExpect(org.springframework.test.web.client.match.MockRestRequestMatchers.method(HttpMethod.GET))
+            .andRespond(org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess(
+                objectMapper.writeValueAsString(mapaMock),
+                MediaType.APPLICATION_JSON
+            ));
+
+        // Mockear respuesta del proxy para bloqueo de asientos (se configurará con los datos del asiento después)
+        // Pre-configuramos el mock básico, pero necesitamos los datos del asiento seleccionado
+        // Por ahora solo preparamos la estructura, el mock completo se agregará después de seleccionar el asiento
 
         // ============================================
         // PASO 4: OBTENER MAPA DE ASIENTOS
@@ -196,13 +278,14 @@ class FlujoCompletoVentaIT {
         // ============================================
         // PASO 5: ACTUALIZAR EVENTO EN SESIÓN
         // ============================================
+        // Nota: Usar ID interno para que el bloqueo funcione (el servicio de bloqueo compara con el ID recibido)
         System.out.println("💾 Paso 5: Guardando evento " + eventoId + " en sesión");
 
         mockMvc
             .perform(put("/api/sesion/evento/" + eventoId).header(AUTHORIZATION, "Bearer " + jwtToken))
             .andExpect(status().isNoContent());
 
-        System.out.println("✅ Evento guardado en sesión");
+        System.out.println("✅ Evento guardado en sesión (ID: " + eventoId + ")");
 
         // ============================================
         // PASO 6: SELECCIONAR ASIENTOS
@@ -234,6 +317,34 @@ class FlujoCompletoVentaIT {
         // PASO 7: BLOQUEAR ASIENTOS
         // ============================================
         System.out.println("🔒 Paso 7: Bloqueando asientos seleccionados");
+
+        // Preparar respuesta del proxy para bloqueo de asientos
+        BloqueoAsientosResponseDTO bloqueoMock = new BloqueoAsientosResponseDTO();
+        bloqueoMock.setExitoso(true);
+        bloqueoMock.setMensaje("Asientos bloqueados exitosamente");
+        bloqueoMock.setAsientosBloqueados(new ArrayList<>());
+        bloqueoMock.setAsientosNoDisponibles(new ArrayList<>());
+        
+        // Agregar el asiento bloqueado
+        BloqueoAsientosResponseDTO.AsientoBloqueoDTO asientoBloqueado = new BloqueoAsientosResponseDTO.AsientoBloqueoDTO();
+        // El response usa fila como String y numero como Integer
+        asientoBloqueado.setFila(filaAsiento);
+        asientoBloqueado.setNumero(numeroAsiento);
+        bloqueoMock.getAsientosBloqueados().add(asientoBloqueado);
+
+        // Resetear el servidor mock para poder agregar una nueva expectativa después del primer request
+        mockProxyServer.reset();
+        
+        // El RestTemplate tiene rootUri configurado, así que el mock debe esperar la URL completa
+        mockProxyServer
+            .expect(org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo("http://localhost:8081/api/asientos/bloquear"))
+            .andExpect(org.springframework.test.web.client.match.MockRestRequestMatchers.method(HttpMethod.POST))
+            .andExpect(org.springframework.test.web.client.match.MockRestRequestMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath("$.eventoId").value(eventoId)) // El servicio usa el ID interno
+            .andRespond(org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess(
+                objectMapper.writeValueAsString(bloqueoMock),
+                MediaType.APPLICATION_JSON
+            ));
 
         MvcResult bloqueoResult = mockMvc
             .perform(post("/api/asientos/bloquear/" + eventoId).header(AUTHORIZATION, "Bearer " + jwtToken))
@@ -292,7 +403,7 @@ class FlujoCompletoVentaIT {
         MvcResult estadoResult = mockMvc
             .perform(get("/api/sesion/estado").header(AUTHORIZATION, "Bearer " + jwtToken))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.eventoId").value(eventoId))
+            .andExpect(jsonPath("$.eventoId").value(eventoId)) // Usar ID interno (antes de actualizar para venta)
             .andExpect(jsonPath("$.asientosSeleccionados").isArray())
             .andReturn();
 
@@ -303,13 +414,46 @@ class FlujoCompletoVentaIT {
         System.out.println("   🎫 Asientos seleccionados: " + estadoSesion.get("asientosSeleccionados").size());
 
         // ============================================
+        // PASO 9.5: ACTUALIZAR EVENTO EN SESIÓN PARA VENTA
+        // ============================================
+        // Nota: El servicio de venta busca por eventoIdCatedra y compara con el estado de sesión
+        // Necesitamos actualizar la sesión con eventoIdCatedra antes de la venta
+        System.out.println("🔄 Actualizando sesión con ID Cátedra para la venta: " + eventoIdCatedra);
+
+        mockMvc
+            .perform(put("/api/sesion/evento/" + eventoIdCatedra).header(AUTHORIZATION, "Bearer " + jwtToken))
+            .andExpect(status().isNoContent());
+
+        System.out.println("✅ Sesión actualizada con ID Cátedra para la venta");
+
+        // Configurar mock para confirmar venta en el proxy
+        // Resetear el servidor mock para poder agregar una nueva expectativa
+        mockProxyServer.reset();
+        
+        // Mockear respuesta del proxy para confirmar venta
+        com.um.eventosbackend.service.dto.VentaResponseDTO ventaConfirmadaMock = new com.um.eventosbackend.service.dto.VentaResponseDTO();
+        ventaConfirmadaMock.setResultado("EXITOSA");
+        ventaConfirmadaMock.setMensaje("Venta confirmada exitosamente");
+        ventaConfirmadaMock.setVentaIdCatedra(12345L); // ID de ejemplo
+        
+        mockProxyServer
+            .expect(org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo("http://localhost:8081/api/ventas/confirmar"))
+            .andExpect(org.springframework.test.web.client.match.MockRestRequestMatchers.method(HttpMethod.POST))
+            .andExpect(org.springframework.test.web.client.match.MockRestRequestMatchers.content().contentType(MediaType.APPLICATION_JSON))
+            .andRespond(org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess(
+                objectMapper.writeValueAsString(ventaConfirmadaMock),
+                MediaType.APPLICATION_JSON
+            ));
+
+        // ============================================
         // PASO 10: PROCESAR VENTA
         // ============================================
         System.out.println("💳 Paso 10: Procesando venta");
 
         // Crear el request de venta
+        // Nota: El servicio de venta busca por eventoIdCatedra, no por ID interno
         Map<String, Object> ventaRequest = new HashMap<>();
-        ventaRequest.put("eventoId", eventoId);
+        ventaRequest.put("eventoId", eventoIdCatedra);
         Map<String, Object> asientoVenta = new HashMap<>();
         asientoVenta.put("fila", filaAsiento);
         asientoVenta.put("numero", numeroAsiento);
