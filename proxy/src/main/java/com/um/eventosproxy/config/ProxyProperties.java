@@ -1,0 +1,112 @@
+package com.um.eventosproxy.config;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+@ConfigurationProperties(prefix = "application", ignoreUnknownFields = false)
+public class ProxyProperties {
+
+    private final Backend backend = new Backend();
+    private final Kafka kafka = new Kafka();
+    private final Catedra catedra = new Catedra();
+
+    public Backend getBackend() {
+        return backend;
+    }
+
+    public Kafka getKafka() {
+        return kafka;
+    }
+
+    public Catedra getCatedra() {
+        return catedra;
+    }
+
+    public static class Backend {
+        private String baseUrl = "http://localhost:8080";
+        private String syncEventsPath = "/api/admin/eventos/sincronizar";
+        private final Jwt jwt = new Jwt();
+
+        public String getBaseUrl() {
+            return baseUrl;
+        }
+
+        public void setBaseUrl(String baseUrl) {
+            this.baseUrl = baseUrl;
+        }
+
+        public String getSyncEventsPath() {
+            return syncEventsPath;
+        }
+
+        public void setSyncEventsPath(String syncEventsPath) {
+            this.syncEventsPath = syncEventsPath;
+        }
+
+        public Jwt getJwt() {
+            return jwt;
+        }
+
+        public static class Jwt {
+            private String secret;
+            private Long tokenValidityInSeconds = 86400L;
+
+            public String getSecret() {
+                return secret;
+            }
+
+            public void setSecret(String secret) {
+                this.secret = secret;
+            }
+
+            public Long getTokenValidityInSeconds() {
+                return tokenValidityInSeconds;
+            }
+
+            public void setTokenValidityInSeconds(Long tokenValidityInSeconds) {
+                this.tokenValidityInSeconds = tokenValidityInSeconds;
+            }
+        }
+    }
+
+    public static class Kafka {
+        private final Topic topic = new Topic();
+
+        public Topic getTopic() {
+            return topic;
+        }
+
+        public static class Topic {
+            private String eventos = "eventos-changes";
+
+            public String getEventos() {
+                return eventos;
+            }
+
+            public void setEventos(String eventos) {
+                this.eventos = eventos;
+            }
+        }
+    }
+
+    public static class Catedra {
+        private String baseUrl = "http://192.168.194.250:8080";
+        private String authToken;
+
+        public String getBaseUrl() {
+            return baseUrl;
+        }
+
+        public void setBaseUrl(String baseUrl) {
+            this.baseUrl = baseUrl;
+        }
+
+        public String getAuthToken() {
+            return authToken;
+        }
+
+        public void setAuthToken(String authToken) {
+            this.authToken = authToken;
+        }
+    }
+}
+

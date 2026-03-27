@@ -1,0 +1,159 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+!.idea/codeStyles/
+!.idea/inspectionProfiles/
+!.idea/runConfigurations/
+!.idea/tasks.xml
+!.idea/vcs.xml
+!.idea/workspace.xml
+!.idea/*.xml
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Android/Mobile Cache ###
+mobile/.gradle/
+mobile/app/build/
+mobile/shared/build/
+mobile/build/
+mobile/.idea/
+mobile/local.properties
+mobile/*.iml
+mobile/.cxx/
+mobile/.externalNativeBuild/
+mobile/app/.cxx/
+mobile/app/.externalNativeBuild/
+mobile/**/build/
+mobile/**/.gradle/
+mobile/**/cache/
+mobile/**/.cache/
+mobile/**/caches/
+mobile/**/.kotlin/
+mobile/**/intermediates/
+mobile/**/generated/
+mobile/**/tmp/
+mobile/**/outputs/
+mobile/**/*.dex
+mobile/**/*.apk
+mobile/**/*.ap_
+mobile/**/*.aab
+mobile/**/cacheable/
+mobile/**/*.tab
+mobile/**/*.tab.*
+mobile/**/*.bin
+mobile/**/.transforms/
+
+### Cache directories (general) ###
+**/cache/
+**/.cache/
+**/caches/
+**/.kotlin/
+**/tmp/
+**/temp/
+**/.tmp/
+**/.temp/
+
+### Node.js Cache ###
+**/node_modules/
+**/.npm/
+**/.node/
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/.yarn/
+**/.pnp/
+**/.pnp.js
+
+### Gradle Cache ###
+**/.gradle/
+**/gradle-app.setting
+**/!gradle-wrapper.jar
+**/gradlew
+**/gradlew.bat
+**/gradle-wrapper.properties
+
+### Maven Cache ###
+**/target/
+**/.mvn/
+**/mvnw
+**/mvnw.cmd
+**/.m2/
+
+### IntelliJ Cache ###
+**/.idea/
+**/*.iml
+**/*.iws
+**/*.ipr
+**/.idea/caches/
+**/.idea/modules.xml
+**/.idea/workspace.xml
+**/.idea/tasks.xml
+**/.idea/dictionaries/
+**/.idea/shelf/
+
+### Build outputs ###
+**/build/
+**/out/
+**/dist/
+**/bin/
+**/classes/
+**/generated/
+**/intermediates/
+**/outputs/
+
+### Android specific cache ###
+**/.cxx/
+**/.externalNativeBuild/
+**/.android/
+**/local.properties
+**/proguard/
+**/lint-results*.xml
+**/lint-results*.html
+**/lint-results*.json
+**/lint-results*.txt
+
+### Kotlin Cache ###
+**/.kotlin/
+**/kotlin/
+**/*.kotlin_module
+
+### Logs ###
+**/*.log
+**/*.log.*
+**/logs/
+**/.logs/
+
+### OS specific ###
+**/.DS_Store
+**/Thumbs.db
+**/.Spotlight-V100/
+**/.Trashes/
+**/._*
